@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Cash Clicker</title>
+    <style>
+        :root {
+            --bg-dark: #1f0052ff;
+            --bg-light: rgb(86, 0, 136);
+            --text-color: #ffffff;
+            --accent-color: #15ff00;
+            /* Gold */
+            --accent-secondary: #ffffff;
+            /* Green for cash */
+            --sidebar-bg: #16213e;
+            --btn-bg: #1f2937;
+            --btn-hover: #374151;
+            --super-color: #0c6800;
+            /* Red/Orange for supercharge */
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            /* Nice looking radial background */
+            background: radial-gradient(circle at center, var(--bg-light) 0%, var(--bg-dark) 100%);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* --- The Money Shower Effect (Hidden by default) --- */
+        #money-shower-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+            display: none;
+            /* Hidden until supercharge */
+        }
+
+        /* When parent has 'supercharge-active' class, show the shower */
+        .supercharge-active #money-shower-container {
+            display: block;
+        }
+
+        .falling-bill {
+            position: absolute;
+            font-size: 2rem;
+            animation: fall linear forwards;
+            opacity: 0.7;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(105vh) rotate(360deg);
+            }
+        }
+
+
+        /* --- Left Side: The Game Area --- */
+        .game-area {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+            /* above background effects */
+        }
+
+        .score-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        #score {
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--accent-color);
+            text-shadow: 0 0 20px rgba(21, 255, 0, 0.226);
+        }
+
+        #cps-display {
+            font-size: 1.1rem;
+            color: #ffffff;
+            margin-top: 5px;
+        }
+
+        /* The Clickable Object */
+        .click-zone-container {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #click-object {
+            font-size: 12rem;
+            cursor: pointer;
+            /* Smooth transitions for hover and click states */
+            transition: transform 0.05s ease-in-out, filter 0.2s;
+            filter: drop-shadow(0 0 25px rgba(43, 255, 0, 0.212));
+
+            /* Fix for emoji display issues on some browsers */
+            font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            line-height: 1;
+        }
+
+        /* Hover Effect: Slight pulse and brighten */
+        #click-object:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 35px rgba(95, 255, 63, 0.178)) brightness(1.1);
+        }
+
+        /* Click Effect: Squash down quickly */
+        #click-object:active {
+            transform: scale(0.95) rotate(-2deg);
+            transition: transform 0.02s;
+        }
+
+        /* Supercharge State for click object */
+        .supercharge-active #click-object {
+            filter: drop-shadow(0 0 50px var(--super-color)) brightness(1.2) sepia(0.3);
+            animation: shake 0.5s infinite;
+        }
+
+        @keyframes shake {
+            0% {
+                transform: translate(1px, 1px) rotate(0deg);
+            }
+
+            10% {
+                transform: translate(-1px, -2px) rotate(-1deg);
+            }
+
+            20% {
+                transform: translate(-3px, 0px) rotate(1deg);
+            }
+
+            30% {
+                transform: translate(3px, 2px) rotate(0deg);
+            }
+
+            40% {
+                transform: translate(1px, -1px) rotate(1deg);
+            }
+
+            50% {
+                transform: translate(-1px, 2px) rotate(-1deg);
+            }
+
+            60% {
+                transform: translate(-3px, 1px) rotate(0deg);
+            }
+
+            70% {
+                transform: translate(3px, 1px) rotate(-1deg);
+            }
+
+            80% {
+                transform: translate(-1px, -1px) rotate(1deg);
+            }
+
+            90% {
+                transform: translate(1px, 2px) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(1px, -2px) rotate(-1deg);
+            }
+        }
+
+
+        /* --- Supercharge Meter --- */
+        .meter-container {
+            width: 300px;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .meter-bg {
+            height: 25px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+            border: 2px solid #333;
+        }
+
+        #meter-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-color), var(--super-color));
+            transition: width 0.2s ease-out;
+            box-shadow: 0 0 15px var(--accent-color);
+        }
+
+        .supercharge-active #meter-fill {
+            /* Make it pulse when active */
+            animation: meterPulse 0.5s infinite alternate;
+        }
+
+        @keyframes meterPulse {
+            from {
+                filter: brightness(1);
+            }
+
+            to {
+                filter: brightness(1.5);
+            }
+        }
+
+        .meter-label {
+            margin-top: 8px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+
+        /* --- Animation for Floating Numbers --- */
+        .float-text {
+            position: absolute;
+            font-weight: 900;
+            color: var(--accent-secondary);
+            pointer-events: none;
+            z-index: 10;
+            text-shadow: 1px 1px 2px black;
+            animation: floatUp 1.2s ease-out forwards;
+        }
+
+        /* Different color for critical clicks */
+        .float-text.crit {
+            color: var(--super-color);
+            font-size: 1.5em;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) scale(0.8);
+            }
+        }
+
+        /* --- Right Side: The Shop --- */
+        .shop-area {
+            flex: 1;
+            min-width: 350px;
+            max-width: 450px;
+            background-color: var(--sidebar-bg);
+            padding: 25px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+
+        h2 {
+            margin-top: 0;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .upgrade-item {
+            background-color: var(--btn-bg);
+            padding: 15px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid transparent;
+        }
+
+        .upgrade-item:hover {
+            background-color: var(--btn-hover);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .upgrade-item:active {
+            transform: translateY(3px);
+        }
+
+        .upgrade-item.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            filter: grayscale(0.8);
+            background-color: rgba(31, 41, 55, 0.5);
+        }
+
+        .upgrade-info h4 {
+            margin: 0 0 5px 0;
+            font-size: 1.1rem;
+        }
+
+        .upgrade-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--accent-secondary);
+        }
+
+        .cost {
+            font-weight: bold;
+            color: var(--accent-color);
+            font-size: 1.1rem;
+        }
+
+        .evolution-status {
+            position: absolute;
+            bottom: 30px;
+            text-align: center;
+            font-size: 1.2rem;
+            color: #ffffff;
+            width: 100%;
+        }
+
+        #stage-name {
+            color: var(--text-color);
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body id="main-body">
+
+    <div id="money-shower-container"></div>
+
+    <div class="game-area">
+        <div class="score-container">
+            <div id="score">$0</div>
+            <div id="cps-display">Per Second: $0</div>
+        </div>
+
+        <div class="click-zone-container">
+            <div id="click-object" onclick="handleClick(event)">💰</div>
+        </div>
+
+        <div class="meter-container">
+            <div class="meter-bg">
+                <div id="meter-fill"></div>
+            </div>
+            <div class="meter-label" id="meter-text">SUPERCHARGE: 0%</div>
+        </div>
+
+        <div class="evolution-status">
+            <p>Status: <span id="stage-name">Humble Beginnings</span></p>
+        </div>
+    </div>
+
+    <div class="shop-area">
+        <h2>Uprades</h2>
+
+        <div id="btn-click-upgrade" class="upgrade-item" onclick="buyUpgrade('click')">
+            <div class="upgrade-info">
+                <h4>Better Clicks</h4>
+                <p>+5 Per Click</p>
+            </div>
+            <div class="cost" id="cost-click">$1</div>
+        </div>
+
+        <div id="btn-auto-1" class="upgrade-item" onclick="buyUpgrade('auto1')">
+            <div class="upgrade-info">
+                <h4>McDonalds</h4>
+                <p>+$100 / sec</p>
+            </div>
+            <div class="cost" id="cost-auto1">$50</div>
+        </div>
+
+        <div id="btn-auto-2" class="upgrade-item" onclick="buyUpgrade('auto2')">
+            <div class="upgrade-info">
+                <h4>Laborer</h4>
+                <p>+$500 / sec</p>
+            </div>
+            <div class="cost" id="cost-auto2">$250</div>
+        </div>
+
+        <div id="btn-auto-3" class="upgrade-item" onclick="buyUpgrade('auto3')">
+            <div class="upgrade-info">
+                <h4>Investor</h4>
+                <p>+$1K / sec</p>
+            </div>
+            <div class="cost" id="cost-auto3">$5,000</div>
+        </div>
+
+        <div id="btn-auto-4" class="upgrade-item" onclick="buyUpgrade('auto4')">
+            <div class="upgrade-info">
+                <h4>Crypto Miner</h4>
+                <p>+$10K / sec</p>
+            </div>
+            <div class="cost" id="cost-auto4">$30,000</div>
+        </div>
+
+        <div id="btn-auto-5" class="upgrade-item" onclick="buyUpgrade('auto5')">
+            <div class="upgrade-info">
+                <h4>Black Market</h4>
+                <p>+$100K / sec</p>
+            </div>
+            <div class="cost" id="cost-auto5">$250,000</div>
+        </div>
+        <div id="btn-auto-6" class="upgrade-item" onclick="buyUpgrade('auto6')">
+            <div class="upgrade-info">
+                <h4>Company</h4>
+                <p>+$1M / sec</p>
+            </div>
+            <div class="cost" id="cost-auto6">$1,000,000</div>
+        </div>
+        <div id="btn-auto-7" class="upgrade-item" onclick="buyUpgrade('auto7')">
+            <div class="upgrade-info">
+                <h4>Stock Market</h4>
+                <p>+$50M / sec</p>
+            </div>
+            <div class="cost" id="cost-auto7">$15,000,000</div>
+        </div>
+        <div id="btn-auto-8" class="upgrade-item" onclick="buyUpgrade('auto8')">
+            <div class="upgrade-info">
+                <h4>Land Trader</h4>
+                <p>+$500M / sec</p>
+            </div>
+            <div class="cost" id="cost-auto8">$50,000,000</div>
+        </div>
+        <div id="btn-auto-9" class="upgrade-item" onclick="buyUpgrade('auto9')">
+            <div class="upgrade-info">
+                <h4>Intergalactic Trader</h4>
+                <p>+$1B / sec</p>
+            </div>
+            <div class="cost" id="cost-auto9">$500,000,000</div>
+        </div>
+    </div>
+
+    <script>
+        // --- Utility: Number Formatting (Abbreviation) ---
+        function formatNumber(num) {
+            if (num < 1000) return Math.floor(num).toString();
+
+            const suffixes = ["", "K", "M", "B", "T", "Qa"];
+            // Divide by 1000 until we find the right suffix index
+            const i = Math.floor(Math.log10(num) / 3);
+            // Calculate the simplified number
+            const scaledNum = num / Math.pow(1000, i);
+            // Return formatted string (e.g., "1.25M")
+            return scaledNum.toFixed(2).replace(/\.00$/, '') + suffixes[i];
+        }
+
+
+        // --- Game State ---
+        let gameData = {
+            money: 0,
+            lifetimeMoney: 0,
+            baseClickPower: 5000,
+            autoIncome: 0,
+            // Supercharge Data
+            meterCurrent: 0,
+            meterMax: 500, // Clicks needed to fill
+            isSupercharged: false,
+            superchargeMultiplier: 500000000,
+            superchargeDuration: 15000, // 15 seconds ms
+
+            upgrades: {
+                click: { count: 0, cost: 5, baseCost: 5, increase: 1.1 },
+                auto1: { count: 0, cost: 50, baseCost: 50, increase: 1.3 },
+                auto2: { count: 0, cost: 250, baseCost: 250, increase: 1.3 },
+                auto3: { count: 0, cost: 5000, baseCost: 5000, increase: 1.3 },
+                auto4: { count: 0, cost: 30000, baseCost: 30000, increase: 1.3 },
+                auto5: { count: 0, cost: 250000, baseCost: 250000, increase: 1.3 },
+                auto6: { count: 0, cost: 1000000, baseCost: 1000000, increase: 1.3 },
+                auto7: { count: 0, cost: 15000000, baseCost: 15000000, increase: 1.3 },
+                auto8: { count: 0, cost: 5000000, baseCost: 5000000, increase: 1.3 },
+                auto9: { count: 0, cost: 500000000, baseCost: 500000000, increase: 1.3 },
+            }
+        };
+
+        // --- Visual Stages (Evolution) ---
+        const stages = [
+            { threshold: 0, emoji: "💲", name: "Homeless" },
+            { threshold: 5000, emoji: "💵", name: "Poor" },
+            { threshold: 100000, emoji: "💸", name: "Rich" },
+            { threshold: 500000, emoji: "💳", name: "Business Owner" },
+            { threshold: 1000000, emoji: "🤑", name: "Millionaire" },
+            { threshold: 100000000, emoji: "👴", name: "Generational Wealth" },
+            { threshold: 1000000000, emoji: "💎", name: "Billionaire" },
+            { threshold: 100000000000, emoji: "🏦", name: "Multi-Billionaire" },
+            { threshold: 1000000000000, emoji: "👑", name: "Trillionaire" },
+            { threshold: 100000000000000, emoji: "🌎", name: "Multi-Trillionaire" },
+            { threshold: 1000000000000000, emoji: "🌌", name: "Unfathomable Wealth" }
+        ];
+
+        // --- Core Logic ---
+
+        function handleClick(event) {
+            // Calculate Actual Click Power based on supercharge state
+            let currentClickValue = gameData.baseClickPower;
+            if (gameData.isSupercharged) {
+                currentClickValue *= gameData.superchargeMultiplier;
+            }
+
+            addMoney(currentClickValue);
+
+            // Floating text (add 'crit' class if supercharged)
+            spawnFloatingText(event.clientX, event.clientY, `+$${formatNumber(currentClickValue)}`, gameData.isSupercharged);
+
+            // Handle Meter Logic
+            if (!gameData.isSupercharged) {
+                gameData.meterCurrent++;
+                if (gameData.meterCurrent >= gameData.meterMax) {
+                    activateSupercharge();
+                }
+                updateMeterUI();
+            }
+        }
+
+        function activateSupercharge() {
+            gameData.isSupercharged = true;
+            gameData.meterCurrent = gameData.meterMax;
+            document.getElementById('main-body').classList.add('supercharge-active');
+            document.getElementById('meter-text').innerText = "MONEY RAIN ACTIVE! (100000x Money)";
+
+            // Start the money rain animation
+            startMoneyShower();
+
+            // Set timer to end it
+            setTimeout(() => {
+                endSupercharge();
+            }, gameData.superchargeDuration);
+        }
+
+        function endSupercharge() {
+            gameData.isSupercharged = false;
+            gameData.meterCurrent = 0;
+            document.getElementById('main-body').classList.remove('supercharge-active');
+            stopMoneyShower();
+            updateMeterUI();
+        }
+
+
+        function addMoney(amount) {
+            gameData.money += amount;
+            gameData.lifetimeMoney += amount;
+            updateUI();
+        }
+
+        function buyUpgrade(type) {
+            const upgrade = gameData.upgrades[type];
+
+            if (gameData.money >= upgrade.cost) {
+                gameData.money -= upgrade.cost;
+                upgrade.count++;
+                // Cost scaling using the specific increase rate for that item
+                upgrade.cost = Math.ceil(upgrade.baseCost * Math.pow(upgrade.increase, upgrade.count));
+
+                // Apply Benefits
+                switch (type) {
+                    case 'click': gameData.baseClickPower += 5; break;
+                    case 'auto1': gameData.autoIncome += 100; break;
+                    case 'auto2': gameData.autoIncome += 500; break;
+                    case 'auto3': gameData.autoIncome += 1000; break;
+                    case 'auto4': gameData.autoIncome += 10000; break;
+                    case 'auto5': gameData.autoIncome += 100000; break;
+                    case 'auto6': gameData.autoIncome += 1000000; break;
+                    case 'auto7': gameData.autoIncome += 50000000; break;
+                    case 'auto8': gameData.autoIncome += 500000000; break;
+                    case 'auto9': gameData.autoIncome += 1000000000; break;
+                }
+                updateUI();
+            }
+        }
+
+        // --- Game Loop (Passive Income) ---
+        // Using requestAnimationFrame for smoother updates if we wanted, but setInterval is fine for simple idle
+        setInterval(() => {
+            if (gameData.autoIncome > 0) {
+                // Passive income is NOT affected by supercharge multiplier
+                addMoney(gameData.autoIncome);
+            }
+        }, 1000);
+
+        // --- Visuals & UI ---
+
+        function updateMeterUI() {
+            const percentage = (gameData.meterCurrent / gameData.meterMax) * 100;
+            document.getElementById('meter-fill').style.width = `${percentage}%`;
+            if (!gameData.isSupercharged) {
+                document.getElementById('meter-text').innerText = `Money Rain: ${Math.floor(percentage)}%`;
+            }
+        }
+
+        let showerInterval;
+        function startMoneyShower() {
+            const container = document.getElementById('money-shower-container');
+            // Create a new falling bill every 200ms
+            showerInterval = setInterval(() => {
+                const bill = document.createElement('div');
+                bill.classList.add('falling-bill');
+                bill.innerText = ['💵', '💴', '💶', '💷'][Math.floor(Math.random() * 4)];
+                // Randomize start position and animation duration
+                bill.style.left = Math.random() * 100 + 'vw';
+                bill.style.animationDuration = (Math.random() * 2 + 3) + 's'; // between 3 and 5s
+
+                container.appendChild(bill);
+
+                // Cleanup DOM
+                setTimeout(() => { bill.remove(); }, 5000);
+            }, 200);
+        }
+
+        function stopMoneyShower() {
+            clearInterval(showerInterval);
+            // Optional: clear remaining bills instantly
+            // document.getElementById('money-shower-container').innerHTML = '';
+        }
+
+        function spawnFloatingText(x, y, text, isCrit) {
+            const el = document.createElement('div');
+            el.classList.add('float-text');
+            if (isCrit) el.classList.add('crit');
+
+            // Offset slightly so it doesn't cover the exact click point perfectly
+            el.style.left = `${x - 20}px`;
+            el.style.top = `${y - 20}px`;
+            el.innerText = text;
+            document.body.appendChild(el);
+            setTimeout(() => { el.remove(); }, 1200);
+        }
+
+        function updateUI() {
+            // Update Text with formatting
+            document.getElementById('score').innerText = `$${formatNumber(gameData.money)}`;
+            document.getElementById('cps-display').innerText = `Per Second: $${formatNumber(gameData.autoIncome)}`;
+
+            // Update Upgrade Costs and affordbility status
+            for (const key in gameData.upgrades) {
+                const upgrade = gameData.upgrades[key];
+                const costEl = document.getElementById(`cost-${key}`);
+                const btnEl = document.getElementById(`btn-${key === 'click' ? 'click-upgrade' : key.replace('auto', 'auto-')}`);
+
+                if (costEl && btnEl) {
+                    costEl.innerText = `$${formatNumber(upgrade.cost)}`;
+                    if (gameData.money >= upgrade.cost) {
+                        btnEl.classList.remove('disabled');
+                    } else {
+                        btnEl.classList.add('disabled');
+                    }
+                }
+            }
+
+            checkEvolution();
+        }
+
+
+        function checkEvolution() {
+            const currentStage = [...stages].reverse().find(stage => gameData.lifetimeMoney >= stage.threshold);
+            if (currentStage) {
+                const objectEl = document.getElementById('click-object');
+                const stageNameEl = document.getElementById('stage-name');
+                if (objectEl.innerText !== currentStage.emoji) {
+                    objectEl.innerText = currentStage.emoji;
+                    stageNameEl.innerText = currentStage.name;
+                    // Little celebratory shake when evolving
+                    objectEl.style.animation = "shake 0.5s";
+                    setTimeout(() => { objectEl.style.animation = ""; }, 300)
+                }
+            }
+        }
+
+        // Initialize UI on load
+        updateUI();
+        updateMeterUI();
+
+    </script>
+</body>
+
+</html>
