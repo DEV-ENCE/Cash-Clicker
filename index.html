@@ -7,8 +7,8 @@
     <title>Ultimate Cash Clicker</title>
     <style>
         :root {
-            --bg-dark: rgb(0, 3, 156);
-            --bg-light: rgb(158, 0, 206);
+            --bg-dark: rgb(0, 183, 207);
+            --bg-light: rgb(0, 55, 206);
             --text-color: #ffffff;
             --accent-color: #15ff00;
             /* Gold */
@@ -31,6 +31,8 @@
             height: 100vh;
             overflow: hidden;
             user-select: none;
+            touch-action: manipulation;
+            overscroll-behavior: contain;
         }
 
         /* --- The Money Shower Effect (Hidden by default) --- */
@@ -109,11 +111,16 @@
         #click-object {
             font-size: 12rem;
             cursor: pointer;
-            /* Smooth transitions for hover and click states */
             transition: transform 0.05s ease-in-out, filter 0.2s;
-            filter: drop-shadow(0 0 25px rgba(43, 255, 0, 0.212));
 
-            /* Fix for emoji display issues on some browsers */
+            /* Mobile Fixes */
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+
+            filter: drop-shadow(0 0 25px rgba(43, 255, 0, 0.212));
             font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
             line-height: 1;
         }
@@ -338,6 +345,52 @@
             color: var(--text-color);
             font-weight: bold;
         }
+
+        /* ========== MOBILE RESPONSIVE LAYOUT ========== */
+        @media (max-width: 768px) {
+
+            body {
+                flex-direction: column;
+                height: auto;
+                overflow-y: auto;
+            }
+
+            .game-area {
+                flex: none;
+                padding: 20px 10px;
+            }
+
+            .shop-area {
+                flex: none;
+                width: 100%;
+                max-width: none;
+                min-width: 0;
+                box-shadow: none;
+                border-top: 2px solid rgba(255, 255, 255, 0.1);
+            }
+
+            #click-object {
+                font-size: 9rem;
+            }
+
+            .click-zone-container {
+                width: 200px;
+                height: 200px;
+                touch-action: manipulation;
+            }
+
+            .meter-container {
+                width: 90%;
+            }
+
+            .score-container {
+                margin-bottom: 20px;
+            }
+
+            h2 {
+                text-align: center;
+            }
+        }
     </style>
 </head>
 
@@ -352,7 +405,7 @@
         </div>
 
         <div class="click-zone-container">
-            <div id="click-object" onclick="handleClick(event)">💰</div>
+            <div id="click-object" onclick="handleClick(event)" role="button" aria-label="Tap to earn money">💰</div>
         </div>
 
         <div class="meter-container">
@@ -452,7 +505,7 @@
         function formatNumber(num) {
             if (num < 1000) return Math.floor(num).toString();
 
-            const suffixes = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp"];
+            const suffixes = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc", "Udc", "Ddc", "Tdc", "Qadc", "Qidc", "Sxdc", "Spdc", "Ocdc", "Nmdc", "Vg", "Uvg", "Dvg", "Tvg", "Qav", "Qvg", "Svg", "Spv", "Ovg", "Nvg", "Tg", "Utg", "Dtg"];
             // Divide by 1000 until we find the right suffix index
             const i = Math.floor(Math.log10(num) / 3);
             // Calculate the simplified number
@@ -461,11 +514,11 @@
             return scaledNum.toFixed(2).replace(/\.00$/, '') + suffixes[i];
         }
 
-
         // --- Game State ---
         let gameData = {
             money: 0,
             lifetimeMoney: 0,
+            lastSavedTime: Date.now(),
             baseClickPower: 1,
             autoIncome: 0,
             // Supercharge Data
@@ -488,6 +541,50 @@
                 auto9: { count: 0, cost: 15000000000, baseCost: 15000000000, increase: 1.5 },
             }
         };
+
+        // ================= SAVE / LOAD SYSTEM =================
+        const SAVE_KEY = "ultimate_cash_clicker_save";
+
+        function saveGame() {
+            gameData.lastSavedTime = Date.now();
+            localStorage.setItem(SAVE_KEY, JSON.stringify(gameData));
+        }
+
+        function loadGame() {
+            const savedData = localStorage.getItem(SAVE_KEY);
+            if (!savedData) return;
+
+            const parsed = JSON.parse(savedData);
+
+            // ---- OFFLINE EARNINGS ----
+            const now = Date.now();
+            const timeAwayMs = now - parsed.lastSavedTime;
+            const secondsAway = Math.floor(timeAwayMs / 1000);
+
+            if (secondsAway > 0 && parsed.autoIncome > 0) {
+                const offlineEarnings = secondsAway * parsed.autoIncome;
+                parsed.money += offlineEarnings;
+                parsed.lifetimeMoney += offlineEarnings;
+
+                console.log(`Offline earnings: $${offlineEarnings}`);
+            }
+
+            gameData.money = parsed.money;
+            gameData.lifetimeMoney = parsed.lifetimeMoney;
+            gameData.lastSavedTime = now;
+            gameData.baseClickPower = parsed.baseClickPower;
+            gameData.autoIncome = parsed.autoIncome;
+            gameData.meterCurrent = parsed.meterCurrent;
+            gameData.isSupercharged = false;
+
+            for (const key in gameData.upgrades) {
+                if (parsed.upgrades[key]) {
+                    gameData.upgrades[key].count = parsed.upgrades[key].count;
+                    gameData.upgrades[key].cost = parsed.upgrades[key].cost;
+                }
+            }
+        }
+
 
         // --- Visual Stages (Evolution) ---
         const stages = [
@@ -525,6 +622,7 @@
                     activateSupercharge();
                 }
                 updateMeterUI();
+                saveGame();
             }
         }
 
@@ -556,6 +654,7 @@
             gameData.money += amount;
             gameData.lifetimeMoney += amount;
             updateUI();
+            saveGame();
         }
 
         function buyUpgrade(type) {
@@ -581,6 +680,7 @@
                     case 'auto9': gameData.autoIncome += 1000000000; break;
                 }
                 updateUI();
+                saveGame();
             }
         }
 
@@ -592,6 +692,12 @@
                 addMoney(gameData.autoIncome);
             }
         }, 1000);
+
+        // Auto-save every 5 seconds
+        setInterval(saveGame, 5000);
+
+        // Save when page closes or refreshes
+        window.addEventListener("beforeunload", saveGame);
 
         // --- Visuals & UI ---
 
@@ -680,6 +786,9 @@
                 }
             }
         }
+
+        // Load save game first
+        loadGame();
 
         // Initialize UI on load
         updateUI();
