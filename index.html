@@ -7,8 +7,8 @@
     <title>Ultimate Cash Clicker</title>
     <style>
         :root {
-            --bg-dark: #1f0052ff;
-            --bg-light: rgb(86, 0, 136);
+            --bg-dark: rgb(0, 3, 156);
+            --bg-light: rgb(158, 0, 206);
             --text-color: #ffffff;
             --accent-color: #15ff00;
             /* Gold */
@@ -375,7 +375,7 @@
                 <h4>Better Clicks</h4>
                 <p>+5 Per Click</p>
             </div>
-            <div class="cost" id="cost-click">$1</div>
+            <div class="cost" id="cost-click">$50</div>
         </div>
 
         <div id="btn-auto-1" class="upgrade-item" onclick="buyUpgrade('auto1')">
@@ -383,7 +383,7 @@
                 <h4>McDonalds</h4>
                 <p>+$100 / sec</p>
             </div>
-            <div class="cost" id="cost-auto1">$50</div>
+            <div class="cost" id="cost-auto1">$1,000</div>
         </div>
 
         <div id="btn-auto-2" class="upgrade-item" onclick="buyUpgrade('auto2')">
@@ -391,7 +391,7 @@
                 <h4>Laborer</h4>
                 <p>+$500 / sec</p>
             </div>
-            <div class="cost" id="cost-auto2">$250</div>
+            <div class="cost" id="cost-auto2">$12,000</div>
         </div>
 
         <div id="btn-auto-3" class="upgrade-item" onclick="buyUpgrade('auto3')">
@@ -399,7 +399,7 @@
                 <h4>Investor</h4>
                 <p>+$1K / sec</p>
             </div>
-            <div class="cost" id="cost-auto3">$5,000</div>
+            <div class="cost" id="cost-auto3">$25,000</div>
         </div>
 
         <div id="btn-auto-4" class="upgrade-item" onclick="buyUpgrade('auto4')">
@@ -407,7 +407,7 @@
                 <h4>Crypto Miner</h4>
                 <p>+$10K / sec</p>
             </div>
-            <div class="cost" id="cost-auto4">$30,000</div>
+            <div class="cost" id="cost-auto4">$100,000</div>
         </div>
 
         <div id="btn-auto-5" class="upgrade-item" onclick="buyUpgrade('auto5')">
@@ -415,35 +415,35 @@
                 <h4>Black Market</h4>
                 <p>+$100K / sec</p>
             </div>
-            <div class="cost" id="cost-auto5">$250,000</div>
+            <div class="cost" id="cost-auto5">$450,000</div>
         </div>
         <div id="btn-auto-6" class="upgrade-item" onclick="buyUpgrade('auto6')">
             <div class="upgrade-info">
                 <h4>Company</h4>
                 <p>+$1M / sec</p>
             </div>
-            <div class="cost" id="cost-auto6">$1,000,000</div>
+            <div class="cost" id="cost-auto6">$20,000,000</div>
         </div>
         <div id="btn-auto-7" class="upgrade-item" onclick="buyUpgrade('auto7')">
             <div class="upgrade-info">
                 <h4>Stock Market</h4>
                 <p>+$50M / sec</p>
             </div>
-            <div class="cost" id="cost-auto7">$15,000,000</div>
+            <div class="cost" id="cost-auto7">$100,000,000</div>
         </div>
         <div id="btn-auto-8" class="upgrade-item" onclick="buyUpgrade('auto8')">
             <div class="upgrade-info">
                 <h4>Land Trader</h4>
                 <p>+$500M / sec</p>
             </div>
-            <div class="cost" id="cost-auto8">$50,000,000</div>
+            <div class="cost" id="cost-auto8">$3,000,000,000</div>
         </div>
         <div id="btn-auto-9" class="upgrade-item" onclick="buyUpgrade('auto9')">
             <div class="upgrade-info">
                 <h4>Intergalactic Trader</h4>
                 <p>+$1B / sec</p>
             </div>
-            <div class="cost" id="cost-auto9">$500,000,000</div>
+            <div class="cost" id="cost-auto9">$15,000,000,000</div>
         </div>
     </div>
 
@@ -452,7 +452,7 @@
         function formatNumber(num) {
             if (num < 1000) return Math.floor(num).toString();
 
-            const suffixes = ["", "K", "M", "B", "T", "Qa"];
+            const suffixes = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp"];
             // Divide by 1000 until we find the right suffix index
             const i = Math.floor(Math.log10(num) / 3);
             // Calculate the simplified number
@@ -466,39 +466,39 @@
         let gameData = {
             money: 0,
             lifetimeMoney: 0,
-            baseClickPower: 5000,
+            baseClickPower: 1,
             autoIncome: 0,
             // Supercharge Data
             meterCurrent: 0,
-            meterMax: 500, // Clicks needed to fill
+            meterMax: 250, // Clicks needed to fill
             isSupercharged: false,
-            superchargeMultiplier: 500000000,
-            superchargeDuration: 15000, // 15 seconds ms
+            superchargeMultiplier: 100,
+            superchargeDuration: 10000, // 15 seconds ms
 
             upgrades: {
-                click: { count: 0, cost: 5, baseCost: 5, increase: 1.1 },
-                auto1: { count: 0, cost: 50, baseCost: 50, increase: 1.3 },
-                auto2: { count: 0, cost: 250, baseCost: 250, increase: 1.3 },
-                auto3: { count: 0, cost: 5000, baseCost: 5000, increase: 1.3 },
-                auto4: { count: 0, cost: 30000, baseCost: 30000, increase: 1.3 },
-                auto5: { count: 0, cost: 250000, baseCost: 250000, increase: 1.3 },
-                auto6: { count: 0, cost: 1000000, baseCost: 1000000, increase: 1.3 },
-                auto7: { count: 0, cost: 15000000, baseCost: 15000000, increase: 1.3 },
-                auto8: { count: 0, cost: 5000000, baseCost: 5000000, increase: 1.3 },
-                auto9: { count: 0, cost: 500000000, baseCost: 500000000, increase: 1.3 },
+                click: { count: 0, cost: 50, baseCost: 50, increase: 1.3 },
+                auto1: { count: 0, cost: 1000, baseCost: 1000, increase: 1.5 },
+                auto2: { count: 0, cost: 12000, baseCost: 12000, increase: 1.5 },
+                auto3: { count: 0, cost: 25000, baseCost: 25000, increase: 1.5 },
+                auto4: { count: 0, cost: 100000, baseCost: 100000, increase: 1.5 },
+                auto5: { count: 0, cost: 450000, baseCost: 450000, increase: 1.5 },
+                auto6: { count: 0, cost: 20000000, baseCost: 20000000, increase: 1.5 },
+                auto7: { count: 0, cost: 100000000, baseCost: 100000000, increase: 1.5 },
+                auto8: { count: 0, cost: 3000000000, baseCost: 3000000000, increase: 1.5 },
+                auto9: { count: 0, cost: 15000000000, baseCost: 15000000000, increase: 1.5 },
             }
         };
 
         // --- Visual Stages (Evolution) ---
         const stages = [
             { threshold: 0, emoji: "💲", name: "Homeless" },
-            { threshold: 5000, emoji: "💵", name: "Poor" },
+            { threshold: 1000, emoji: "💵", name: "Poor" },
             { threshold: 100000, emoji: "💸", name: "Rich" },
             { threshold: 500000, emoji: "💳", name: "Business Owner" },
             { threshold: 1000000, emoji: "🤑", name: "Millionaire" },
             { threshold: 100000000, emoji: "👴", name: "Generational Wealth" },
             { threshold: 1000000000, emoji: "💎", name: "Billionaire" },
-            { threshold: 100000000000, emoji: "🏦", name: "Multi-Billionaire" },
+            { threshold: 100000000000, emoji: "✈", name: "Multi-Billionaire" },
             { threshold: 1000000000000, emoji: "👑", name: "Trillionaire" },
             { threshold: 100000000000000, emoji: "🌎", name: "Multi-Trillionaire" },
             { threshold: 1000000000000000, emoji: "🌌", name: "Unfathomable Wealth" }
@@ -532,7 +532,7 @@
             gameData.isSupercharged = true;
             gameData.meterCurrent = gameData.meterMax;
             document.getElementById('main-body').classList.add('supercharge-active');
-            document.getElementById('meter-text').innerText = "MONEY RAIN ACTIVE! (100000x Money)";
+            document.getElementById('meter-text').innerText = "MONEY RAIN ACTIVE! ($100x Money)";
 
             // Start the money rain animation
             startMoneyShower();
