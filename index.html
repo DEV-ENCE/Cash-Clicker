@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#5900ff">
     <title>Ultimate Cash Clicker</title>
@@ -202,7 +203,6 @@
             }
         }
 
-
         /* --- Supercharge Meter --- */
         .meter-container {
             width: 300px;
@@ -325,7 +325,7 @@
 
         .upgrade-item:hover {
             background-color: var(--btn-hover);
-            border-color: rgb(0, 0, 0);
+            border-color: rgb(89, 0, 148);
         }
 
         .upgrade-item:active {
@@ -375,6 +375,10 @@
 
             body {
                 flex-direction: column;
+                padding-top: var(--safe-top);
+                padding-bottom: var(--safe-bottom);
+                padding-left: var(--safe-left);
+                padding-right: var(--safe-right);
 
             }
 
@@ -391,11 +395,12 @@
                 min-height: 0;
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
-                padding-bottom: calc(30px + var(--safe-botom));
+                padding-bottom: calc(25px + var(--safe-botom));
             }
 
             #click-object {
                 font-size: 9rem;
+                touch-action: manipulation;
             }
 
             .click-zone-container {
@@ -416,6 +421,13 @@
                 text-align: center;
             }
         }
+
+        :root {
+            --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
+            --safe-bottom: env(safe-area-inset-left);
+            --safe-botto: env(safe-area-inset-right);
+        }
     </style>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -435,7 +447,7 @@
         </div>
 
         <div class="click-zone-container">
-            <div id="click-object" onclick="handleClick(event)" role="button" aria-label="Tap to earn money">💰</div>
+            <div id="click-object" role="button" arial-label="Tap to earn money">💵</div>
         </div>
 
         <div class="meter-container">
@@ -837,17 +849,26 @@
             clickTierMultiplier = currentStage.multiplier;
 
             const objectEl = document.getElementById('click-object');
-            const stageNameEl = document.getElementById('stage-name');
+            const stageNameEl = document.getAnimations('stage-name');
 
             if (objectEl.innerText !== currentStage.emoji) {
                 objectEl.innerText = currentStage.emoji;
                 stageNameEl.innerText = currentStage.name;
-
-                // Evolution animation
-                objectEl.style.animation = "shake 0.5s";
-                secTimeout(() => { objectEl.style.animation = " "; }, 300);
             }
         }
+
+        const clickObject = document.getElementById("click-object");
+
+        clickObject.addEventListener("pointerup", (e) => {
+            e.preventDefault();
+            handleClick(e);
+
+        });
+
+        clickObject.addEventListener("click", (e) => {
+            if (e.pointerType) return;
+            handleClick(e);
+        });
 
         // Load save game first
         loadGame();
@@ -858,7 +879,9 @@
 
         if ("serviceWorker" in navigator) {
             window.addEventListener("load", () => {
-                navigator.serviceWorker.register("service-worker.js");
+                navigator.serviceWorker.register("service-worker.js")
+                    .then(() => console.log("Service Worker registered"))
+                    .catch(err => console.error("SW registration failed:", err));
             });
         }
 
