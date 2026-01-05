@@ -28,11 +28,11 @@
             color: var(--text-color);
             margin: 0;
             display: flex;
-            height: 100vh;
+            height: 100svh;
             overflow: hidden;
             user-select: none;
             touch-action: manipulation;
-            overscroll-behavior: contain;
+            overscroll-behavior: none;
         }
 
         /* --- The Money Shower Effect (Hidden by default) --- */
@@ -373,26 +373,23 @@
 
             body {
                 flex-direction: column;
-                height: 100vh;
-                overflow: hidden;
 
             }
 
             .game-area {
                 flex: none;
-                min-height: 60vh;
+                height: 55svh;
                 justify-content: flex-start;
-                padding-top: 40px;
-                padding-bottom: 20px;
+                padding-top: calc(30px + var(--safe-top));
             }
 
             .shop-area {
-                flex: none;
-                width: 100%;
-                max-width: none;
-                min-width: 0;
-                box-shadow: none;
-                border-top: 2px solid rgba(255, 255, 255, 0.1);
+                flex: 1;
+                height: 45svh;
+                min-height: 0;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: calc(30px + var(--safe-botom));
             }
 
             #click-object {
@@ -457,7 +454,7 @@
         <div id="btn-click-upgrade" class="upgrade-item" onclick="buyUpgrade('click')">
             <div class="upgrade-info">
                 <h4>Better Clicks</h4>
-                <p>+1 Per Click</p>
+                <p>+5 Per Click</p>
             </div>
             <div class="cost" id="cost-click">$50</div>
         </div>
@@ -465,7 +462,7 @@
         <div id="btn-auto-1" class="upgrade-item" onclick="buyUpgrade('auto1')">
             <div class="upgrade-info">
                 <h4>McDonalds</h4>
-                <p>+$1 / sec</p>
+                <p>+$100 / sec</p>
             </div>
             <div class="cost" id="cost-auto1">$100</div>
         </div>
@@ -473,7 +470,7 @@
         <div id="btn-auto-2" class="upgrade-item" onclick="buyUpgrade('auto2')">
             <div class="upgrade-info">
                 <h4>Laborer</h4>
-                <p>+$100 / sec</p>
+                <p>+$250 / sec</p>
             </div>
             <div class="cost" id="cost-auto2">$5,000</div>
         </div>
@@ -575,17 +572,17 @@
 
             upgrades: {
                 click: { count: 0, cost: 50, baseCost: 50, increase: 1.2 },
-                auto1: { count: 0, cost: 100, baseCost: 100, increase: 1.5 },
-                auto2: { count: 0, cost: 5000, baseCost: 5000, increase: 1.5 },
-                auto3: { count: 0, cost: 50000, baseCost: 50000, increase: 1.5 },
-                auto4: { count: 0, cost: 100000, baseCost: 100000, increase: 1.5 },
-                auto5: { count: 0, cost: 1000000, baseCost: 1000000, increase: 1.5 },
-                auto6: { count: 0, cost: 25000000, baseCost: 25000000, increase: 1.5 },
-                auto7: { count: 0, cost: 125000000, baseCost: 125000000, increase: 1.5 },
-                auto8: { count: 0, cost: 10000000000, baseCost: 10000000000, increase: 1.5 },
-                auto9: { count: 0, cost: 125000000000, baseCost: 125000000000, increase: 1.5 },
-                auto10: { count: 0, cost: 1000000000000, baseCost: 1000000000000, increase: 1.5 },
-                auto11: { count: 0, cost: 10000000000000000, baseCost: 10000000000000000, increase: 1.5 },
+                auto1: { count: 0, cost: 100, baseCost: 100, increase: 1.3 },
+                auto2: { count: 0, cost: 5000, baseCost: 5000, increase: 1.3 },
+                auto3: { count: 0, cost: 50000, baseCost: 50000, increase: 1.3 },
+                auto4: { count: 0, cost: 100000, baseCost: 100000, increase: 1.3 },
+                auto5: { count: 0, cost: 1000000, baseCost: 1000000, increase: 1.3 },
+                auto6: { count: 0, cost: 25000000, baseCost: 25000000, increase: 1.3 },
+                auto7: { count: 0, cost: 125000000, baseCost: 125000000, increase: 1.3 },
+                auto8: { count: 0, cost: 10000000000, baseCost: 10000000000, increase: 1.3 },
+                auto9: { count: 0, cost: 125000000000, baseCost: 125000000000, increase: 1.3 },
+                auto10: { count: 0, cost: 1000000000000, baseCost: 1000000000000, increase: 1.3 },
+                auto11: { count: 0, cost: 10000000000000000, baseCost: 10000000000000000, increase: 1.3 },
             }
         };
 
@@ -724,9 +721,9 @@
 
                 // Apply Benefits
                 switch (type) {
-                    case 'click': gameData.baseClickPower += 1; break;
-                    case 'auto1': gameData.autoIncome += 1; break;
-                    case 'auto2': gameData.autoIncome += 100; break;
+                    case 'click': gameData.baseClickPower += 5; break;
+                    case 'auto1': gameData.autoIncome += 100; break;
+                    case 'auto2': gameData.autoIncome += 250; break;
                     case 'auto3': gameData.autoIncome += 1000; break;
                     case 'auto4': gameData.autoIncome += 5000; break;
                     case 'auto5': gameData.autoIncome += 50000; break;
@@ -734,7 +731,8 @@
                     case 'auto7': gameData.autoIncome += 25000000; break;
                     case 'auto8': gameData.autoIncome += 500000000; break;
                     case 'auto9': gameData.autoIncome += 10000000000; break;
-                    case 'auto10': gameData.autoIncome += 250000000000; break;
+                    case 'auto10': gameData.autoIncome += 500000000000; break;
+                    case 'auto11': gameData.autoIncome += 100000000000000; break;
                 }
                 updateUI();
                 saveGame();
