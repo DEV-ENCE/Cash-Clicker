@@ -7,22 +7,22 @@
     <title>Ultimate Cash Clicker</title>
     <style>
         :root {
-            --bg-dark: rgb(0, 183, 207);
-            --bg-light: rgb(0, 55, 206);
+            --bg-dark: rgb(89, 0, 255);
+            --bg-light: #8d00d3;
             --text-color: #ffffff;
             --accent-color: #15ff00;
             /* Gold */
-            --accent-secondary: #ffffff;
+            --accent-secondary: #48ff00;
             /* Green for cash */
-            --sidebar-bg: #16213e;
-            --btn-bg: #1f2937;
-            --btn-hover: #374151;
-            --super-color: #0c6800;
+            --sidebar-bg: #0056ff;
+            --btn-bg: #9304ff;
+            --btn-hover: #6e00c5;
+            --super-color: #1eff00;
             /* Red/Orange for supercharge */
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Fredoka One', cursive;
             /* Nice looking radial background */
             background: radial-gradient(circle at center, var(--bg-light) 0%, var(--bg-dark) 100%);
             color: var(--text-color);
@@ -89,7 +89,7 @@
             font-size: 4rem;
             font-weight: 900;
             color: var(--accent-color);
-            text-shadow: 0 0 20px rgba(21, 255, 0, 0.226);
+            text-shadow: 0 0 20px rgba(21, 255, 0, 0.479);
         }
 
         #cps-display {
@@ -120,7 +120,7 @@
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
 
-            filter: drop-shadow(0 0 25px rgba(43, 255, 0, 0.212));
+            filter: drop-shadow(0 0 25px rgba(72, 255, 35, 0.527));
             font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
             line-height: 1;
         }
@@ -141,6 +141,17 @@
         .supercharge-active #click-object {
             filter: drop-shadow(0 0 50px var(--super-color)) brightness(1.2) sepia(0.3);
             animation: shake 0.5s infinite;
+        }
+
+        /* Global text stroke */
+        * {
+            -webkit-text-stroke: 0.6px rgba(0, 0, 0, 0.295);
+            text-shadow:
+                1px 1px 0 rgba(0, 0, 0, 0.4),
+                -1px 1px 0 rgba(0, 0, 0, 0.4),
+                1px 1px 0 rgba(0, 0, 0, 0.4),
+                -1px 1px 0 rgba(0, 0, 0, 0.4);
+
         }
 
         @keyframes shake {
@@ -199,18 +210,17 @@
 
         .meter-bg {
             height: 25px;
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgb(255, 255, 255);
             border-radius: 15px;
             overflow: hidden;
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
-            border: 2px solid #333;
+            border: 3px solid #000000;
         }
 
         #meter-fill {
             height: 100%;
             width: 0%;
             background: linear-gradient(90deg, var(--accent-color), var(--super-color));
-            transition: width 0.2s ease-out;
+            transition: width 0.2s ease-in-out;
             box-shadow: 0 0 15px var(--accent-color);
         }
 
@@ -243,14 +253,14 @@
             color: var(--accent-secondary);
             pointer-events: none;
             z-index: 10;
-            text-shadow: 1px 1px 2px black;
-            animation: floatUp 1.2s ease-out forwards;
+            text-shadow: 1px 1px 2px rgba(51, 255, 0, 0.541);
+            animation: floatUp 1.2s ease-in-out forwards;
         }
 
         /* Different color for critical clicks */
         .float-text.crit {
             color: var(--super-color);
-            font-size: 1.5em;
+            font-size: 1.2em;
         }
 
         @keyframes floatUp {
@@ -269,20 +279,32 @@
         .shop-area {
             flex: 1;
             min-width: 350px;
-            max-width: 450px;
-            background-color: var(--sidebar-bg);
+            max-width: 450;
+            background:
+                linear-gradiient(100deg,
+                    rgba(0, 86, 255, 0.95),
+                    rgba(0, 60, 200, 0.95));
             padding: 25px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 15px;
-            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+
+            /* New polish*/
+            border-left: 4px solid rgba(0, 0, 0, 0.6);
+            border-top-left-radius: 30px;
+            border-bottom-left-radius: 30px;
+
+            box-shadow:
+                inset 0 0 0 2px rgba(255, 255, 255, 0.08),
+                -8px 0 25px rgba(0, 0, 0, 0.5);
+
             z-index: 2;
         }
 
         h2 {
             margin-top: 0;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgb(255, 255, 255);
             padding-bottom: 15px;
             letter-spacing: 1px;
         }
@@ -290,18 +312,18 @@
         .upgrade-item {
             background-color: var(--btn-bg);
             padding: 15px 20px;
-            border-radius: 12px;
+            border-radius: 25px;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 1px solid transparent;
+            border: 3px solid transparent;
         }
 
         .upgrade-item:hover {
             background-color: var(--btn-hover);
-            border-color: rgba(255, 255, 255, 0.2);
+            border-color: rgb(0, 0, 0);
         }
 
         .upgrade-item:active {
@@ -309,10 +331,10 @@
         }
 
         .upgrade-item.disabled {
-            opacity: 0.6;
+            opacity: 0.7;
             cursor: not-allowed;
-            filter: grayscale(0.8);
-            background-color: rgba(31, 41, 55, 0.5);
+            filter: grayscale(0);
+            background-color: rgba(0, 0, 0, 0.541);
         }
 
         .upgrade-info h4 {
@@ -392,6 +414,11 @@
             }
         }
     </style>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+
 </head>
 
 <body id="main-body">
@@ -412,7 +439,7 @@
             <div class="meter-bg">
                 <div id="meter-fill"></div>
             </div>
-            <div class="meter-label" id="meter-text">SUPERCHARGE: 0%</div>
+            <div class="meter-label" id="meter-text">Money Rain: 0%</div>
         </div>
 
         <div class="evolution-status">
@@ -426,7 +453,7 @@
         <div id="btn-click-upgrade" class="upgrade-item" onclick="buyUpgrade('click')">
             <div class="upgrade-info">
                 <h4>Better Clicks</h4>
-                <p>+5 Per Click</p>
+                <p>+1 Per Click</p>
             </div>
             <div class="cost" id="cost-click">$50</div>
         </div>
@@ -434,17 +461,17 @@
         <div id="btn-auto-1" class="upgrade-item" onclick="buyUpgrade('auto1')">
             <div class="upgrade-info">
                 <h4>McDonalds</h4>
-                <p>+$100 / sec</p>
+                <p>+$1 / sec</p>
             </div>
-            <div class="cost" id="cost-auto1">$1,000</div>
+            <div class="cost" id="cost-auto1">$100</div>
         </div>
 
         <div id="btn-auto-2" class="upgrade-item" onclick="buyUpgrade('auto2')">
             <div class="upgrade-info">
                 <h4>Laborer</h4>
-                <p>+$500 / sec</p>
+                <p>+$100 / sec</p>
             </div>
-            <div class="cost" id="cost-auto2">$12,000</div>
+            <div class="cost" id="cost-auto2">$5,000</div>
         </div>
 
         <div id="btn-auto-3" class="upgrade-item" onclick="buyUpgrade('auto3')">
@@ -452,13 +479,13 @@
                 <h4>Investor</h4>
                 <p>+$1K / sec</p>
             </div>
-            <div class="cost" id="cost-auto3">$25,000</div>
+            <div class="cost" id="cost-auto3">$50,000</div>
         </div>
 
         <div id="btn-auto-4" class="upgrade-item" onclick="buyUpgrade('auto4')">
             <div class="upgrade-info">
                 <h4>Crypto Miner</h4>
-                <p>+$10K / sec</p>
+                <p>+$5K / sec</p>
             </div>
             <div class="cost" id="cost-auto4">$100,000</div>
         </div>
@@ -466,37 +493,51 @@
         <div id="btn-auto-5" class="upgrade-item" onclick="buyUpgrade('auto5')">
             <div class="upgrade-info">
                 <h4>Black Market</h4>
-                <p>+$100K / sec</p>
+                <p>+$50K / sec</p>
             </div>
-            <div class="cost" id="cost-auto5">$450,000</div>
+            <div class="cost" id="cost-auto5">$1,000,000</div>
         </div>
         <div id="btn-auto-6" class="upgrade-item" onclick="buyUpgrade('auto6')">
             <div class="upgrade-info">
                 <h4>Company</h4>
-                <p>+$1M / sec</p>
+                <p>+$500K / sec</p>
             </div>
-            <div class="cost" id="cost-auto6">$20,000,000</div>
+            <div class="cost" id="cost-auto6">$25,000,000</div>
         </div>
         <div id="btn-auto-7" class="upgrade-item" onclick="buyUpgrade('auto7')">
             <div class="upgrade-info">
                 <h4>Stock Market</h4>
-                <p>+$50M / sec</p>
+                <p>+$25M / sec</p>
             </div>
-            <div class="cost" id="cost-auto7">$100,000,000</div>
+            <div class="cost" id="cost-auto7">$125,000,000</div>
         </div>
         <div id="btn-auto-8" class="upgrade-item" onclick="buyUpgrade('auto8')">
             <div class="upgrade-info">
                 <h4>Land Trader</h4>
                 <p>+$500M / sec</p>
             </div>
-            <div class="cost" id="cost-auto8">$3,000,000,000</div>
+            <div class="cost" id="cost-auto8">$10,000,000,000</div>
         </div>
         <div id="btn-auto-9" class="upgrade-item" onclick="buyUpgrade('auto9')">
             <div class="upgrade-info">
                 <h4>Intergalactic Trader</h4>
-                <p>+$1B / sec</p>
+                <p>+$10B / sec</p>
             </div>
-            <div class="cost" id="cost-auto9">$15,000,000,000</div>
+            <div class="cost" id="cost-auto9">$125,000,000,000</div>
+        </div>
+        <div id="btn-auto-10" class="upgrade-item" onclick="buyUpgrade('auto10')">
+            <div class="upgrade-info">
+                <h4>Star Inventor</h4>
+                <p>+$500B / sec</p>
+            </div>
+            <div class="cost" id="cost-auto10">$1,000,000,000,000</div>
+        </div>
+        <div id="btn-auto-11" class="upgrade-item" onclick="buyUpgrade('auto11')">
+            <div class="upgrade-info">
+                <h4>Dark Matter Harvesting</h4>
+                <p>+$100T / sec</p>
+            </div>
+            <div class="cost" id="cost-auto11">$10,000,000,000,000,000</div>
         </div>
     </div>
 
@@ -525,20 +566,22 @@
             meterCurrent: 0,
             meterMax: 250, // Clicks needed to fill
             isSupercharged: false,
-            superchargeMultiplier: 100,
-            superchargeDuration: 10000, // 15 seconds ms
+            superchargeMultiplier: 500,
+            superchargeDuration: 15000, // 15 seconds ms
 
             upgrades: {
-                click: { count: 0, cost: 50, baseCost: 50, increase: 1.3 },
-                auto1: { count: 0, cost: 1000, baseCost: 1000, increase: 1.5 },
-                auto2: { count: 0, cost: 12000, baseCost: 12000, increase: 1.5 },
-                auto3: { count: 0, cost: 25000, baseCost: 25000, increase: 1.5 },
+                click: { count: 0, cost: 50, baseCost: 50, increase: 1.2 },
+                auto1: { count: 0, cost: 100, baseCost: 100, increase: 1.5 },
+                auto2: { count: 0, cost: 5000, baseCost: 5000, increase: 1.5 },
+                auto3: { count: 0, cost: 50000, baseCost: 50000, increase: 1.5 },
                 auto4: { count: 0, cost: 100000, baseCost: 100000, increase: 1.5 },
-                auto5: { count: 0, cost: 450000, baseCost: 450000, increase: 1.5 },
-                auto6: { count: 0, cost: 20000000, baseCost: 20000000, increase: 1.5 },
-                auto7: { count: 0, cost: 100000000, baseCost: 100000000, increase: 1.5 },
-                auto8: { count: 0, cost: 3000000000, baseCost: 3000000000, increase: 1.5 },
-                auto9: { count: 0, cost: 15000000000, baseCost: 15000000000, increase: 1.5 },
+                auto5: { count: 0, cost: 1000000, baseCost: 1000000, increase: 1.5 },
+                auto6: { count: 0, cost: 25000000, baseCost: 25000000, increase: 1.5 },
+                auto7: { count: 0, cost: 125000000, baseCost: 125000000, increase: 1.5 },
+                auto8: { count: 0, cost: 10000000000, baseCost: 10000000000, increase: 1.5 },
+                auto9: { count: 0, cost: 125000000000, baseCost: 125000000000, increase: 1.5 },
+                auto10: { count: 0, cost: 1000000000000, baseCost: 1000000000000, increase: 1.5 },
+                auto11: { count: 0, cost: 10000000000000000, baseCost: 10000000000000000, increase: 1.5 },
             }
         };
 
@@ -588,24 +631,33 @@
 
         // --- Visual Stages (Evolution) ---
         const stages = [
-            { threshold: 0, emoji: "💲", name: "Homeless" },
-            { threshold: 1000, emoji: "💵", name: "Poor" },
-            { threshold: 100000, emoji: "💸", name: "Rich" },
-            { threshold: 500000, emoji: "💳", name: "Business Owner" },
-            { threshold: 1000000, emoji: "🤑", name: "Millionaire" },
-            { threshold: 100000000, emoji: "👴", name: "Generational Wealth" },
-            { threshold: 1000000000, emoji: "💎", name: "Billionaire" },
-            { threshold: 100000000000, emoji: "✈", name: "Multi-Billionaire" },
-            { threshold: 1000000000000, emoji: "👑", name: "Trillionaire" },
-            { threshold: 100000000000000, emoji: "🌎", name: "Multi-Trillionaire" },
-            { threshold: 1000000000000000, emoji: "🌌", name: "Unfathomable Wealth" }
+            { threshold: 0, emoji: "💵", name: "Homeless", multiplier: 1 },
+            { threshold: 1000, emoji: "💸", name: "Poor", multiplier: 10 },
+            { threshold: 100000, emoji: "💰", name: "Rich", multiplier: 50 },
+            { threshold: 500000, emoji: "💳", name: "Hard Worker", multiplier: 250 },
+            { threshold: 1000000, emoji: "💍", name: "Millionaire", multiplier: 1000 },
+            { threshold: 100000000, emoji: "💎", name: "Generational Wealth", multiplier: 5000 },
+            { threshold: 1000000000, emoji: "🏧", name: "Billionaire", multiplier: 25000 },
+            { threshold: 100000000000, emoji: "🏦", name: "Multi-Billionaire", multiplier: 100000 },
+            { threshold: 1000000000000, emoji: "🌍", name: "Trillionaire", multiplier: 250000 },
+            { threshold: 100000000000000, emoji: "🪐", name: "Multi-Trillionaire", multiplier: 1000000 },
+            { threshold: 1000000000000000, emoji: "🌌", name: "Unfathomable Wealth", multiplier: 50000000 },
+            { threshold: 100000000000000000, emoji: "🛸", name: "Hyperinflation", multiplier: 250000000 },
+            { threshold: 1000000000000000000, emoji: "🌐", name: "Solve world hunger", multiplier: 25000000000 },
+            { threshold: 100000000000000000000, emoji: "👽", name: "You can buy planets", multiplier: 250000000000 },
+            { threshold: 1000000000000000000000, emoji: "👾", name: "Stole GODS bank information", multiplier: 5000000000000 },
+            { threshold: 100000000000000000000000, emoji: "🤖", name: "Achieved the unachievable", multiplier: 100000000000000 },
+            { threshold: 1000000000000000000000000, emoji: "😇", name: "GOD", multiplier: 5000000000000000 },
+            { threshold: 1000000000000000000000000000, emoji: "👑", name: "MAX RANK", multiplier: 500000000000000000 },
+
+
         ];
 
         // --- Core Logic ---
 
         function handleClick(event) {
             // Calculate Actual Click Power based on supercharge state
-            let currentClickValue = gameData.baseClickPower;
+            let currentClickValue = gameData.baseClickPower * clickTierMultiplier;
             if (gameData.isSupercharged) {
                 currentClickValue *= gameData.superchargeMultiplier;
             }
@@ -630,7 +682,7 @@
             gameData.isSupercharged = true;
             gameData.meterCurrent = gameData.meterMax;
             document.getElementById('main-body').classList.add('supercharge-active');
-            document.getElementById('meter-text').innerText = "MONEY RAIN ACTIVE! ($100x Money)";
+            document.getElementById('meter-text').innerText = "MONEY RAIN ACTIVE! ($100x per click)";
 
             // Start the money rain animation
             startMoneyShower();
@@ -668,16 +720,17 @@
 
                 // Apply Benefits
                 switch (type) {
-                    case 'click': gameData.baseClickPower += 5; break;
-                    case 'auto1': gameData.autoIncome += 100; break;
-                    case 'auto2': gameData.autoIncome += 500; break;
+                    case 'click': gameData.baseClickPower += 1; break;
+                    case 'auto1': gameData.autoIncome += 1; break;
+                    case 'auto2': gameData.autoIncome += 100; break;
                     case 'auto3': gameData.autoIncome += 1000; break;
-                    case 'auto4': gameData.autoIncome += 10000; break;
-                    case 'auto5': gameData.autoIncome += 100000; break;
-                    case 'auto6': gameData.autoIncome += 1000000; break;
-                    case 'auto7': gameData.autoIncome += 50000000; break;
+                    case 'auto4': gameData.autoIncome += 5000; break;
+                    case 'auto5': gameData.autoIncome += 50000; break;
+                    case 'auto6': gameData.autoIncome += 500000; break;
+                    case 'auto7': gameData.autoIncome += 25000000; break;
                     case 'auto8': gameData.autoIncome += 500000000; break;
-                    case 'auto9': gameData.autoIncome += 1000000000; break;
+                    case 'auto9': gameData.autoIncome += 10000000000; break;
+                    case 'auto10': gameData.autoIncome += 250000000000; break;
                 }
                 updateUI();
                 saveGame();
@@ -771,19 +824,24 @@
             checkEvolution();
         }
 
-
         function checkEvolution() {
-            const currentStage = [...stages].reverse().find(stage => gameData.lifetimeMoney >= stage.threshold);
-            if (currentStage) {
-                const objectEl = document.getElementById('click-object');
-                const stageNameEl = document.getElementById('stage-name');
-                if (objectEl.innerText !== currentStage.emoji) {
-                    objectEl.innerText = currentStage.emoji;
-                    stageNameEl.innerText = currentStage.name;
-                    // Little celebratory shake when evolving
-                    objectEl.style.animation = "shake 0.5s";
-                    setTimeout(() => { objectEl.style.animation = ""; }, 300)
-                }
+            const currentStage = [...stages].reverse()
+                .find(stage => gameData.lifetimeMoney >= stage.threshold);
+
+            if (!currentStage) return;
+
+            clickTierMultiplier = currentStage.multiplier;
+
+            const objectEl = document.getElementById('click-object');
+            const stageNameEl = document.getElementById('stage-name');
+
+            if (objectEl.innerText !== currentStage.emoji) {
+                objectEl.innerText = currentStage.emoji;
+                stageNameEl.innerText = currentStage.name;
+
+                // Evolution animation
+                objectEl.style.animation = "shake 0.5s";
+                secTimeout(() => { objectEl.style.animation = " "; }, 300);
             }
         }
 
