@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ultimate Cash Clicker</title>
     <style>
         :root {
@@ -32,7 +32,7 @@
             overflow: hidden;
             user-select: none;
             touch-action: manipulation;
-            overscroll-behavior: contain;
+            overscroll-behavior: none;
         }
 
         /* --- The Money Shower Effect (Hidden by default) --- */
@@ -373,13 +373,17 @@
 
             body {
                 flex-direction: column;
-                height: auto;
-                overflow-y: auto;
+                height: 100vh;
+                overflow: hidden;
+
             }
 
             .game-area {
                 flex: none;
-                padding: 20px 10px;
+                min-height: 60vh;
+                justify-content: flex-start;
+                padding-top: 40px;
+                padding-bottom: 20px;
             }
 
             .shop-area {
@@ -648,7 +652,7 @@
             { threshold: 1000000000000000000000, emoji: "👾", name: "Stole GODS bank information", multiplier: 5000000000000 },
             { threshold: 100000000000000000000000, emoji: "🤖", name: "Achieved the unachievable", multiplier: 100000000000000 },
             { threshold: 1000000000000000000000000, emoji: "😇", name: "GOD", multiplier: 5000000000000000 },
-            { threshold: 1000000000000000000000000000, emoji: "👑", name: "MAX RANK", multiplier: 500000000000000000 },
+            { threshold: 1000000000000000000000000000, emoji: "👑", name: "MAX TIER", multiplier: 500000000000000000 },
 
 
         ];
