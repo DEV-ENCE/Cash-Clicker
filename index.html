@@ -444,10 +444,11 @@
         <div class="score-container">
             <div id="score">$0</div>
             <div id="cps-display">Per Second: $0</div>
+            <div id="clickTierMultiplier">Click Multiplier: x0</div>
         </div>
 
         <div class="click-zone-container">
-            <div id="click-object" role="button" arial-label="Tap to earn money">💵</div>
+            <div id="click-object" role="button" aria-label="Tap to earn money">🏆</div>
         </div>
 
         <div class="meter-container">
@@ -468,7 +469,7 @@
         <div id="btn-click-upgrade" class="upgrade-item" onclick="buyUpgrade('click')">
             <div class="upgrade-info">
                 <h4>Better Clicks</h4>
-                <p>+5 Per Click</p>
+                <p>+1 Per Click</p>
             </div>
             <div class="cost" id="cost-click">$50</div>
         </div>
@@ -476,9 +477,9 @@
         <div id="btn-auto-1" class="upgrade-item" onclick="buyUpgrade('auto1')">
             <div class="upgrade-info">
                 <h4>McDonalds</h4>
-                <p>+$100 / sec</p>
+                <p>+$10 / sec</p>
             </div>
-            <div class="cost" id="cost-auto1">$100</div>
+            <div class="cost" id="cost-auto1">$250</div>
         </div>
 
         <div id="btn-auto-2" class="upgrade-item" onclick="buyUpgrade('auto2')">
@@ -581,38 +582,49 @@
             meterCurrent: 0,
             meterMax: 250, // Clicks needed to fill
             isSupercharged: false,
-            superchargeMultiplier: 500,
-            superchargeDuration: 15000, // 15 seconds ms
+            superchargeMultiplier: 100,
+            superchargeDuration: 10000, // 10 seconds ms
 
             upgrades: {
-                click: { count: 0, cost: 50, baseCost: 50, increase: 1.2 },
-                auto1: { count: 0, cost: 100, baseCost: 100, increase: 1.3 },
-                auto2: { count: 0, cost: 5000, baseCost: 5000, increase: 1.3 },
-                auto3: { count: 0, cost: 50000, baseCost: 50000, increase: 1.3 },
-                auto4: { count: 0, cost: 100000, baseCost: 100000, increase: 1.3 },
-                auto5: { count: 0, cost: 1000000, baseCost: 1000000, increase: 1.3 },
-                auto6: { count: 0, cost: 25000000, baseCost: 25000000, increase: 1.3 },
-                auto7: { count: 0, cost: 125000000, baseCost: 125000000, increase: 1.3 },
-                auto8: { count: 0, cost: 10000000000, baseCost: 10000000000, increase: 1.3 },
-                auto9: { count: 0, cost: 125000000000, baseCost: 125000000000, increase: 1.3 },
-                auto10: { count: 0, cost: 1000000000000, baseCost: 1000000000000, increase: 1.3 },
-                auto11: { count: 0, cost: 10000000000000000, baseCost: 10000000000000000, increase: 1.3 },
+                click: { count: 0, cost: 50, baseCost: 50, increase: 1.6 },
+                auto1: { count: 0, cost: 250, baseCost: 250, increase: 1.5 },
+                auto2: { count: 0, cost: 5000, baseCost: 5000, increase: 1.5 },
+                auto3: { count: 0, cost: 50000, baseCost: 50000, increase: 1.5 },
+                auto4: { count: 0, cost: 100000, baseCost: 100000, increase: 1.5 },
+                auto5: { count: 0, cost: 1000000, baseCost: 1000000, increase: 1.5 },
+                auto6: { count: 0, cost: 25000000, baseCost: 25000000, increase: 1.5 },
+                auto7: { count: 0, cost: 125000000, baseCost: 125000000, increase: 1.5 },
+                auto8: { count: 0, cost: 10000000000, baseCost: 10000000000, increase: 1.5 },
+                auto9: { count: 0, cost: 125000000000, baseCost: 125000000000, increase: 1.5 },
+                auto10: { count: 0, cost: 1000000000000, baseCost: 1000000000000, increase: 1.5 },
+                auto11: { count: 0, cost: 10000000000000000, baseCost: 10000000000000000, increase: 1.5 },
             }
         };
 
         // ================= SAVE / LOAD SYSTEM =================
         const SAVE_KEY = "ultimate_cash_clicker_save";
+        const SAVE_VERSION = 2;
 
         function saveGame() {
             gameData.lastSavedTime = Date.now();
-            localStorage.setItem(SAVE_KEY, JSON.stringify(gameData));
+            localStorage.setItem(SAVE_KEY, JSON.stringify({
+                version: SAVE_VERSION,
+                data: gameData
+            }));
         }
 
         function loadGame() {
             const savedData = localStorage.getItem(SAVE_KEY);
             if (!savedData) return;
 
-            const parsed = JSON.parse(savedData);
+            const parsedSave = JSON.parse(savedData);
+            if (!parsedSave.version || parsedSave.version !== SAVE_VERSION) {
+                console.warn("Save version mismatch - resetting save");
+                localStorage.removeItem(SAVE_KEY);
+                return;
+            }
+
+            const parsed = parsedSave.data;
 
             // ---- OFFLINE EARNINGS ----
             const now = Date.now();
@@ -647,9 +659,9 @@
         // --- Visual Stages (Evolution) ---
         const stages = [
             { threshold: 0, emoji: "💵", name: "Homeless", multiplier: 1 },
-            { threshold: 1000, emoji: "💸", name: "Poor", multiplier: 10 },
-            { threshold: 100000, emoji: "💰", name: "Rich", multiplier: 50 },
-            { threshold: 500000, emoji: "💳", name: "Hard Worker", multiplier: 250 },
+            { threshold: 1000, emoji: "💸", name: "Poor", multiplier: 5 },
+            { threshold: 100000, emoji: "💰", name: "Rich", multiplier: 10 },
+            { threshold: 500000, emoji: "💳", name: "Hard Worker", multiplier: 100 },
             { threshold: 1000000, emoji: "💍", name: "Millionaire", multiplier: 1000 },
             { threshold: 100000000, emoji: "💎", name: "Generational Wealth", multiplier: 5000 },
             { threshold: 1000000000, emoji: "🏧", name: "Billionaire", multiplier: 25000 },
@@ -735,9 +747,9 @@
 
                 // Apply Benefits
                 switch (type) {
-                    case 'click': gameData.baseClickPower += 5; break;
-                    case 'auto1': gameData.autoIncome += 100; break;
-                    case 'auto2': gameData.autoIncome += 250; break;
+                    case 'click': gameData.baseClickPower += 1; break;
+                    case 'auto1': gameData.autoIncome += 10; break;
+                    case 'auto2': gameData.autoIncome += 100; break;
                     case 'auto3': gameData.autoIncome += 1000; break;
                     case 'auto4': gameData.autoIncome += 5000; break;
                     case 'auto5': gameData.autoIncome += 50000; break;
@@ -821,6 +833,8 @@
             document.getElementById('score').innerText = `$${formatNumber(gameData.money)}`;
             document.getElementById('cps-display').innerText = `Per Second: $${formatNumber(gameData.autoIncome)}`;
 
+            checkEvolution();
+
             // Update Upgrade Costs and affordbility status
             for (const key in gameData.upgrades) {
                 const upgrade = gameData.upgrades[key];
@@ -851,9 +865,13 @@
             const objectEl = document.getElementById('click-object');
             const stageNameEl = document.getAnimations('stage-name');
 
+            stageNameEl.textContent = currentStage.name;
+
             if (objectEl.innerText !== currentStage.emoji) {
                 objectEl.innerText = currentStage.emoji;
-                stageNameEl.innerText = currentStage.name;
+
+                objectEl.style.animation = "shake 0.5s";
+                setTimeout(() => objectEl.style.animation = "", 300);
             }
         }
 
