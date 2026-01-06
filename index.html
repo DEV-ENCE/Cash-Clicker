@@ -444,7 +444,6 @@
         <div class="score-container">
             <div id="score">$0</div>
             <div id="cps-display">Per Second: $0</div>
-            <div id="clickTierMultiplier">Click Multiplier: x0</div>
         </div>
 
         <div class="click-zone-container">
@@ -580,9 +579,9 @@
             autoIncome: 0,
             // Supercharge Data
             meterCurrent: 0,
-            meterMax: 250, // Clicks needed to fill
+            meterMax: 200, // Clicks needed to fill
             isSupercharged: false,
-            superchargeMultiplier: 100,
+            superchargeMultiplier: 30,
             superchargeDuration: 10000, // 10 seconds ms
 
             upgrades: {
@@ -709,7 +708,7 @@
             gameData.isSupercharged = true;
             gameData.meterCurrent = gameData.meterMax;
             document.getElementById('main-body').classList.add('supercharge-active');
-            document.getElementById('meter-text').innerText = "MONEY RAIN ACTIVE! ($100x per click)";
+            document.getElementById('meter-text').innerText = "MONEY RAIN ACTIVE! ($30x per click)";
 
             // Start the money rain animation
             startMoneyShower();
