@@ -112,6 +112,10 @@
         }
 
         #click-object {
+            position: relative;
+        }
+
+        #click-object {
             font-size: 12rem;
             cursor: pointer;
             transition: transform 0.05s ease-in-out, filter 0.2s;
@@ -275,6 +279,54 @@
                 opacity: 0;
                 transform: translateY(-100px) scale(0.8);
             }
+        }
+
+        @keyframes collapseToWhite {
+            0% {
+                transform: scale(1);
+                filter: brightness(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(0.2);
+                filter: brightness(5) grayscale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+        }
+
+        @keyframes rebirthFromWhite {
+            0% {
+                transform: scale(0);
+                filter: brightness(5) grayscale(1);
+                opacity: 1;
+            }
+
+            60% {
+                transform-origin: scale(1.3);
+                filter: brightness(3);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1);
+                filter: brightness(1);
+                opacity: 1;
+            }
+        }
+
+        .evolve-collapse {
+            animation: collapseToWhite 0.6s ease-in forwards;
+        }
+
+        .evolve-collapse {
+            animation: rebirthFromWhite 0.6s ease-out forwards;
         }
 
         /* --- Right Side: The Shop --- */
@@ -581,7 +633,7 @@
             meterCurrent: 0,
             meterMax: 200, // Clicks needed to fill
             isSupercharged: false,
-            superchargeMultiplier: 30,
+            superchargeMultiplier: 50,
             superchargeDuration: 10000, // 10 seconds ms
 
             upgrades: {
@@ -704,11 +756,13 @@
             }
         }
 
+        let isEvolving = false;
+
         function activateSupercharge() {
             gameData.isSupercharged = true;
             gameData.meterCurrent = gameData.meterMax;
             document.getElementById('main-body').classList.add('supercharge-active');
-            document.getElementById('meter-text').innerText = "x30 MONEY ACTIVE!";
+            document.getElementById('meter-text').innerText = "x50 MONEY ACTIVE!";
 
             // Start the money rain animation
             startMoneyShower();
@@ -866,17 +920,29 @@
 
             stageNameEl.textContent = currentStage.name;
 
-            if (objectEl.innerText !== currentStage.emoji) {
-                objectEl.innerText = currentStage.emoji;
+            if (objectEl.textContent === currentStage.emoji || isEvolving) return;
 
-                objectEl.style.animation = "shake 0.5s";
-                setTimeout(() => objectEl.style.animation = "", 300);
-            }
+            isEvolving = true;
+
+            objectEl.classList.remove("evolve-rebirth");
+            objectEl.classList.add("evolve-collapse");
+
+            setTimeout(() => {
+                objectEl.textContent = currentStage.emoji;
+                objectEl.classList.remove("evolve-collapse");
+                objectEl.classList.add("evolve-rebirth");
+
+                setTimeout(() => {
+                    objectEl.classList.remove("evolve-rebirth");
+                    isEvolving = false;
+                }, 600);
+            }, 600);
         }
 
         const clickObject = document.getElementById("click-object");
 
         clickObject.addEventListener("pointerup", (e) => {
+            if (isEvolving) return;
             e.preventDefault();
             handleClick(e);
 
